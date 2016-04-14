@@ -3,6 +3,8 @@
  */
 package net.stupidiot.iothingers.controller;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,7 +83,12 @@ public class UserController
         return response;
     }
 
-    @RequestMapping(path = "/delete-user", method = RequestMethod.DELETE, consumes = "application/json")
+    /**
+     * 
+     * @param userId
+     * @return
+     */
+    @RequestMapping(path = "/delete-user", method = RequestMethod.DELETE)
     public RestResponse<Boolean> deleteUser(final int userId)
     {
         final RestResponse<Boolean> response = new RestResponse<>();
@@ -94,7 +101,7 @@ public class UserController
      * @param isActive
      * @return
      */
-    @RequestMapping(path = "/set-user-activity", method = RequestMethod.POST, consumes = "application/x-www-form-urlencoded")
+    @RequestMapping(path = "/set-user-activity", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public RestResponse<Boolean> setUserActivity(@RequestParam(value = "user-id") final int userId, @RequestParam(value = "is-active") final boolean isActive)
     {
         final RestResponse<Boolean> response = new RestResponse<>();
@@ -112,6 +119,35 @@ public class UserController
             response.setResponseCode(400);
             response.setResponseMessage("Failure: " + e.getMessage());
             response.setType(ResponseType.BOOLEAN);
+            response.setResponse(null);
+        }
+        
+        return response;
+    }
+    
+    /**
+     * 
+     * @param userId
+     * @return
+     */
+    @RequestMapping(path = "/get-friends-of-user", method = RequestMethod.GET)
+    public RestResponse<List<User>> getUserFriends(@RequestParam(value = "user-id") final int userId)
+    {
+        final RestResponse<List<User>> response = new RestResponse<>();
+        
+        try
+        {
+            final List<User> friends = this.service.getFriendsOfUser(userId);
+            response.setResponseCode(200);
+            response.setResponseMessage("Success");
+            response.setType(ResponseType.LIST);
+            response.setResponse(friends);
+        }
+        catch (Exception e)
+        {
+            response.setResponseCode(400);
+            response.setResponseMessage("Failure: " + e.getMessage());
+            response.setType(ResponseType.LIST);
             response.setResponse(null);
         }
         

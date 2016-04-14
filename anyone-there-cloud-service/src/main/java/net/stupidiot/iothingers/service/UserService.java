@@ -3,6 +3,8 @@
  */
 package net.stupidiot.iothingers.service;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,9 +55,25 @@ public class UserService
         return this.dao.insertUser(user);
     }
     
+    /**
+     * 
+     * @param userId
+     * @param isActive
+     * @return
+     */
     public boolean updateUserActivity(final int userId, final boolean isActive)
     {
         LOG.info("UserService.updateUserActivity called");
-        return this.dao.updateUserActivity(userId, isActive);
+        return this.dao.updateUserActivity(userId, isActive) == 1;
+    }
+
+    /**
+     * @param userId
+     * @return
+     */
+    public List<User> getFriendsOfUser(int userId)
+    {
+        LOG.info("UserService.getFriendsOfUser called");
+        return this.dao.getFriendsOfUser(userId);
     }
 }

@@ -13,10 +13,10 @@ public class Group
 {
     private String id;
     private String name;
-    private User creator;
     private List<User> members;
-    private String roomId;
-    private String courseId;
+    private int roomId;
+    private int courseId;
+    private int creatorId;
 
     /**
      * @return the id
@@ -53,23 +53,6 @@ public class Group
     }
 
     /**
-     * @return the creator
-     */
-    public User getCreator()
-    {
-        return creator;
-    }
-
-    /**
-     * @param creator
-     *            the creator to set
-     */
-    public void setCreator(User creator)
-    {
-        this.creator = creator;
-    }
-
-    /**
      * @return the members
      */
     public List<User> getMembers()
@@ -89,7 +72,7 @@ public class Group
     /**
      * @return the roomId
      */
-    public String getRoomId()
+    public int getRoomId()
     {
         return roomId;
     }
@@ -98,7 +81,7 @@ public class Group
      * @param roomId
      *            the roomId to set
      */
-    public void setRoomId(String roomId)
+    public void setRoomId(int roomId)
     {
         this.roomId = roomId;
     }
@@ -106,7 +89,7 @@ public class Group
     /**
      * @return the courseId
      */
-    public String getCourseId()
+    public int getCourseId()
     {
         return courseId;
     }
@@ -115,8 +98,25 @@ public class Group
      * @param courseId
      *            the courseId to set
      */
-    public void setCourseId(String courseId)
+    public void setCourseId(int courseId)
     {
         this.courseId = courseId;
+    }
+
+    /**
+     * @return the creatorId
+     */
+    public int getCreatorId()
+    {
+        return creatorId;
+    }
+
+    /**
+     * @param creatorId
+     *            the creatorId to set
+     */
+    public void setCreatorId(int creatorId)
+    {
+        this.creatorId = creatorId;
     }
 }

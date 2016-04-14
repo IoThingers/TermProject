@@ -3,9 +3,11 @@
  */
 package net.stupidiot.iothingers.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.stereotype.Component;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,12 +22,12 @@ import net.stupidiot.iothingers.service.UserService;
  * @author Rahul
  *
  */
-@Component
-@ComponentScan
 @RestController
 @RequestMapping(path = "/users")
 public class UserController
 {
+    private static final Logger LOG = LoggerFactory.getLogger(UserController.class);
+
     @Autowired
     private UserService service;
 
@@ -46,14 +48,22 @@ public class UserController
         this.service = service;
     }
 
-    @RequestMapping(path = "/create-user", method = RequestMethod.POST, consumes = "application/json")
-    public RestResponse<Integer> createUser(final User user)
+    /**
+     * 
+     * @param user
+     * @return
+     */
+    @RequestMapping(path = "/create-user", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public RestResponse<Integer> createUser(@RequestBody final User user)
     {
+        LOG.info("Create user method called.");
+        LOG.info("The input received is:" + user.getName());
+
         final RestResponse<Integer> response = new RestResponse<>();
 
         try
         {
-            int userId = service.createUser(user);
+            int userId = this.service.createUser(user);
             response.setResponseCode(200);
             response.setResponseMessage("Success");
             response.setType(ResponseType.NUMBER);
@@ -61,7 +71,8 @@ public class UserController
         }
         catch (Exception e)
         {
-            response.setResponseCode(401);
+            LOG.error("An error occurred while creating the user: ", e);
+            response.setResponseCode(400);
             response.setResponseMessage("Failure: " + e.getMessage());
             response.setType(ResponseType.STRING);
             response.setResponse(null);
@@ -77,11 +88,33 @@ public class UserController
         return response;
     }
 
+    /**
+     * 
+     * @param userId
+     * @param isActive
+     * @return
+     */
     @RequestMapping(path = "/set-user-activity", method = RequestMethod.POST, consumes = "application/x-www-form-urlencoded")
-    public RestResponse<Boolean> setUserActivity(@RequestParam(value = "user-id") final int userId,
-            @RequestParam(value = "is-active") final boolean isActive)
+    public RestResponse<Boolean> setUserActivity(@RequestParam(value = "user-id") final int userId, @RequestParam(value = "is-active") final boolean isActive)
     {
         final RestResponse<Boolean> response = new RestResponse<>();
+        
+        try
+        {
+            final boolean updated = this.service.updateUserActivity(userId, isActive);            
+            response.setResponseCode(200);
+            response.setResponseMessage("Success");
+            response.setType(ResponseType.BOOLEAN);
+            response.setResponse(updated);
+        }
+        catch (Exception e)
+        {
+            response.setResponseCode(400);
+            response.setResponseMessage("Failure: " + e.getMessage());
+            response.setType(ResponseType.BOOLEAN);
+            response.setResponse(null);
+        }
+        
         return response;
     }
 }

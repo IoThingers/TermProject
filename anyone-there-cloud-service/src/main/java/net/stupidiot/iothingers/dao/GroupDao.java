@@ -7,7 +7,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -19,6 +18,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import net.stupidiot.iothingers.dao.mapper.GroupRowMapper;
+import net.stupidiot.iothingers.dao.mapper.UserRowMapper;
 import net.stupidiot.iothingers.model.Group;
 import net.stupidiot.iothingers.model.User;
 
@@ -38,7 +38,7 @@ public class GroupDao extends JdbcTemplateDao
     private static final String INSERT_USER_IN_GROUP_USER = "INSERT INTO GROUP_USER VALUES(?, ?)";
     private static final String DELETE_USER_FROM_GROUP_USER = "DELETE FROM GROUP_USER WHERE UFID = ? AND GROUP_ID = ?";
     private static final String GET_USERS_FOR_GROUP = "SELECT U.UFID, U.USER_NAME, U.USER_MAJOR, U.USER_ACTIVE FROM USERS U, GROUP_USER GU WHERE U.UFID = GU.UFID AND GU.GROUP_ID = ?";
-    private static final String GET_GROUP_BY_GROUP_ID = "SELECT G.GROUP_ID, G.GROUP_NAME, G.ROOM_ID, G.CREATOR_ID, G.COURSE_ID, R.ROOM_NAME, C.COURSE_NAME, U.UFID FROM \"dbo\".\"GROUP\" G, ROOM R, COURSE C WHERE R.ROOM_ID = G.ROOM_ID AND C.COURSE_ID = G.COURSE_ID AND U.UFID = G.CREATOR_ID AND G.GROUP_ID = ?";
+    private static final String GET_GROUP_BY_GROUP_ID = "SELECT G.GROUP_ID, G.GROUP_NAME, G.ROOM_ID, G.CREATOR_ID, G.COURSE_ID, R.ROOM_NAME, C.COURSE_NAME, U.USER_NAME FROM \"dbo\".\"GROUP\" G, ROOM R, COURSE C, USERS U WHERE R.ROOM_ID = G.ROOM_ID AND C.COURSE_ID = G.COURSE_ID AND U.UFID = G.CREATOR_ID AND G.GROUP_ID = ?";
     
     /**
      * @param group
@@ -176,10 +176,30 @@ public class GroupDao extends JdbcTemplateDao
      * @param groupId
      * @return
      */
-    public Group getGroupDetails(int groupId)
+    public Group getGroupDetails(final int groupId)
     {
         LOG.info("GroupDao.getGroupDetails method called for userId: " + groupId);
         
-        return null;
+        final Group group = this.getJdbcTemplate().queryForObject(GET_GROUP_BY_GROUP_ID, new GroupRowMapper(true), groupId);
+        
+        LOG.info("Successfully fetched group details for the group with groupId: " + groupId);
+        
+        populateUsersInGroup(group);
+        
+        return group;
     }
+
+    /**
+     * @param group
+     */
+    private void populateUsersInGroup(final Group group)
+    {
+        LOG.info("GroupDao.populateUsersInGroup method called for group with groupId: " + group.getId());
+        
+        final List<User> members = this.getJdbcTemplate().query(GET_USERS_FOR_GROUP, new UserRowMapper(), group.getId());
+        
+        LOG.info("No. of users fetched for the group: " + members.size());
+        
+        group.setMembers(members);
+    }    
 }

@@ -102,4 +102,14 @@ public class GroupService
         LOG.info("GroupService.deleteUserFromGroup method called.");
         return this.dao.deleteUserFromGroup(userId, groupId) == 1;
     }
+
+    /**
+     * @param groupId
+     * @return
+     */
+    public Group getGroupDetails(int groupId)
+    {
+        LOG.info("GroupService.getGroupDetails method called.");
+        return this.dao.getGroupDetails(groupId);
+    }
 }

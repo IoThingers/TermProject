@@ -278,4 +278,39 @@ public class GroupController
         
         return response;
     }
+    
+    /**
+     * 
+     * @param groupId
+     * @return
+     */
+    @RequestMapping(path = "/get-group-details", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public RestResponse<Group> getGroupDetails(@RequestParam(name = "group-id") final int groupId)
+    {
+        LOG.info("GroupController.getGroupDetails method called for groupId: " + groupId);
+        
+        final RestResponse<Group> response = new RestResponse<>();
+        try
+        {
+            final Group group = this.service.getGroupDetails(groupId);
+
+            response.setResponseCode(200);
+            response.setResponseMessage("Success");
+            response.setType(ResponseType.GROUP);
+            response.setResponse(group);
+
+            LOG.info("Group details successfully fetched : " + group.getId());
+        }
+        catch (Exception e)
+        {
+            LOG.error("An error occurred while fetching the groups details for groupId: " + groupId, e);
+
+            response.setResponseCode(400);
+            response.setResponseMessage("Failure: " + e.getMessage());
+            response.setType(ResponseType.STRING);
+            response.setResponse(null);
+        }
+        
+        return response;
+    }
 }

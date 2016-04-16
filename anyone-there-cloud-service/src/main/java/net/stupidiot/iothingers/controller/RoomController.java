@@ -3,8 +3,6 @@
  */
 package net.stupidiot.iothingers.controller;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import net.stupidiot.iothingers.model.Room;
 import net.stupidiot.iothingers.response.ResponseType;
 import net.stupidiot.iothingers.response.RestResponse;
 import net.stupidiot.iothingers.service.RoomService;
@@ -50,25 +47,6 @@ public class RoomController
 
     /**
      * 
-     * @return
-     */
-    public List<Room> showRooms()
-    {
-        return null;
-    }
-
-    public List<Room> showAvailableRooms()
-    {
-        return null;
-    }
-
-    public boolean setRoomAvailable(int roomId, boolean isAvailable)
-    {
-        return false;
-    }
-
-    /**
-     * 
      * @param roomId
      * @return
      */
@@ -86,6 +64,8 @@ public class RoomController
             response.setResponseMessage("Success");
             response.setType(ResponseType.BOOLEAN);
             response.setResponse(isAvailable);
+            
+            LOG.info("Successfully fetched the availability of room: " + roomId);
         }
         catch (Exception e)
         {

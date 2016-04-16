@@ -16,6 +16,16 @@ import net.stupidiot.iothingers.model.Group;
  */
 public class GroupRowMapper implements RowMapper<Group>
 {
+    private boolean extra;
+    
+    /**
+     * 
+     */
+    public GroupRowMapper(boolean extra)
+    {
+        this.extra = extra;
+    }
+    
     /* (non-Javadoc)
      * @see org.springframework.jdbc.core.RowMapper#mapRow(java.sql.ResultSet, int)
      */
@@ -29,6 +39,13 @@ public class GroupRowMapper implements RowMapper<Group>
         group.setRoomId(rs.getInt(3));
         group.setCreatorId(rs.getInt(4));
         group.setCourseId(rs.getInt(5));
+        
+        if(this.extra)
+        {
+            group.setRoomName(rs.getString(6));
+            group.setCourseName(rs.getString(7));
+            group.setCreatorName(rs.getString(8));
+        }        
         
         return group;
     }

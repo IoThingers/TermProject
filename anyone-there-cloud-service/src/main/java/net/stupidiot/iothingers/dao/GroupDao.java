@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Repository;
 
 import net.stupidiot.iothingers.dao.mapper.GroupRowMapper;
 import net.stupidiot.iothingers.model.Group;
+import net.stupidiot.iothingers.model.User;
 
 /**
  * @author Rahul
@@ -35,6 +37,8 @@ public class GroupDao extends JdbcTemplateDao
     private static final String GET_GROUPS_FOR_COURSE = "SELECT GROUP_ID, GROUP_NAME, ROOM_ID, CREATOR_ID, COURSE_ID FROM \"dbo\".\"GROUP\" WHERE COURSE_ID = ?";
     private static final String INSERT_USER_IN_GROUP_USER = "INSERT INTO GROUP_USER VALUES(?, ?)";
     private static final String DELETE_USER_FROM_GROUP_USER = "DELETE FROM GROUP_USER WHERE UFID = ? AND GROUP_ID = ?";
+    private static final String GET_USERS_FOR_GROUP = "SELECT U.UFID, U.USER_NAME, U.USER_MAJOR, U.USER_ACTIVE FROM USERS U, GROUP_USER GU WHERE U.UFID = GU.UFID AND GU.GROUP_ID = ?";
+    private static final String GET_GROUP_BY_GROUP_ID = "SELECT G.GROUP_ID, G.GROUP_NAME, G.ROOM_ID, G.CREATOR_ID, G.COURSE_ID, R.ROOM_NAME, C.COURSE_NAME, U.UFID FROM \"dbo\".\"GROUP\" G, ROOM R, COURSE C WHERE R.ROOM_ID = G.ROOM_ID AND C.COURSE_ID = G.COURSE_ID AND U.UFID = G.CREATOR_ID AND G.GROUP_ID = ?";
     
     /**
      * @param group
@@ -108,7 +112,7 @@ public class GroupDao extends JdbcTemplateDao
             }
         });
         
-        LOG.info("Deleted " + numRows + "group entries for groupId: " + groupId);
+        LOG.info("Deleted " + numRows + " group entries for groupId: " + groupId);
         
         return numRows;
     }
@@ -119,7 +123,7 @@ public class GroupDao extends JdbcTemplateDao
     public List<Group> getAllGroups()
     {
         LOG.info("GroupDao.getAllGroups method called.");
-        final List<Group> groups = this.getJdbcTemplate().query(GET_ALL_GROUPS, new GroupRowMapper());
+        final List<Group> groups = this.getJdbcTemplate().query(GET_ALL_GROUPS, new GroupRowMapper(false));
         LOG.info("No. of groups successfully fetched: " + groups.size());
         return groups;
     }
@@ -138,7 +142,7 @@ public class GroupDao extends JdbcTemplateDao
             {
                 ps.setInt(1, courseId);
             }
-        }, new GroupRowMapper());
+        }, new GroupRowMapper(false));
         
         LOG.info("No. of groups successfully fetched: " + groups.size());
         return groups;
@@ -166,5 +170,16 @@ public class GroupDao extends JdbcTemplateDao
         LOG.info("User has been successfully deleted from the group.");
         
         return numRows;
+    }
+
+    /**
+     * @param groupId
+     * @return
+     */
+    public Group getGroupDetails(int groupId)
+    {
+        LOG.info("GroupDao.getGroupDetails method called for userId: " + groupId);
+        
+        return null;
     }
 }

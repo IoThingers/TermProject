@@ -17,6 +17,63 @@ public class Group
     private int roomId;
     private int courseId;
     private int creatorId;
+    
+    // Added after making changes. Need to think for
+    // a more elegant solution.
+    private String roomName;
+    private String courseName;
+    private String creatorName;
+
+    /**
+     * @return the roomName
+     */
+    public String getRoomName()
+    {
+        return roomName;
+    }
+
+    /**
+     * @param roomName
+     *            the roomName to set
+     */
+    public void setRoomName(String roomName)
+    {
+        this.roomName = roomName;
+    }
+
+    /**
+     * @return the courseName
+     */
+    public String getCourseName()
+    {
+        return courseName;
+    }
+
+    /**
+     * @param courseName
+     *            the courseName to set
+     */
+    public void setCourseName(String courseName)
+    {
+        this.courseName = courseName;
+    }
+
+    /**
+     * @return the creatorName
+     */
+    public String getCreatorName()
+    {
+        return creatorName;
+    }
+
+    /**
+     * @param creatorName
+     *            the creatorName to set
+     */
+    public void setCreatorName(String creatorName)
+    {
+        this.creatorName = creatorName;
+    }
 
     /**
      * @return the id

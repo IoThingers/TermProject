@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class Group
 {
-    private String id;
+    private int id;
     private String name;
     private List<User> members;
     private int roomId;
@@ -21,7 +21,7 @@ public class Group
     /**
      * @return the id
      */
-    public String getId()
+    public int getId()
     {
         return id;
     }
@@ -30,7 +30,7 @@ public class Group
      * @param id
      *            the id to set
      */
-    public void setId(String id)
+    public void setId(int id)
     {
         this.id = id;
     }

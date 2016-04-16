@@ -9,13 +9,13 @@ package net.stupidiot.iothingers.model;
  */
 public class Course
 {
-    private String id;
+    private int id;
     private String name;
     
     /**
      * @return the id
      */
-    public String getId()
+    public int getId()
     {
         return id;
     }
@@ -23,7 +23,7 @@ public class Course
     /**
      * @param id the id to set
      */
-    public void setId(String id)
+    public void setId(int id)
     {
         this.id = id;
     }

@@ -8,16 +8,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import net.stupidiot.iothingers.dao.mapper.UserRowMapper;
@@ -28,7 +26,7 @@ import net.stupidiot.iothingers.model.User;
  *
  */
 @Repository
-public class UserDao
+public class UserDao extends JdbcTemplateDao
 {
     private static final Logger LOG = LoggerFactory.getLogger(UserDao.class);
 
@@ -36,45 +34,6 @@ public class UserDao
     private static final String UPDATE_USER_ACTIVITY = "UPDATE USERS SET USER_ACTIVE = ? WHERE UFID = ?";
     private static final String GET_USER_DETAILS = "SELECT UFID, USER_NAME, USER_MAJOR, USER_ACTIVE FROM USERS WHERE UFID IN (:ufids)";
     private static final String GET_USER_FRIENDS = "SELECT USERS_1, USERS_2 FROM FRIENDSHIP WHERE USERS_2 = ? OR USERS_1 = ?";
-
-    private JdbcTemplate jdbcTemplate;
-    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
-    /**
-     * @return the jdbcTemplate
-     */
-    public JdbcTemplate getJdbcTemplate()
-    {
-        return jdbcTemplate;
-    }
-
-    /**
-     * @param jdbcTemplate
-     *            the jdbcTemplate to set
-     */
-    @Autowired
-    public void setJdbcTemplate(JdbcTemplate jdbcTemplate)
-    {
-        this.jdbcTemplate = jdbcTemplate;
-    }
-
-    /**
-     * @return the namedParameterJdbcTemplate
-     */
-    public NamedParameterJdbcTemplate getNamedParameterJdbcTemplate()
-    {
-        return namedParameterJdbcTemplate;
-    }
-
-    /**
-     * @param namedParameterJdbcTemplate
-     *            the namedParameterJdbcTemplate to set
-     */
-    @Autowired
-    public void setNamedParameterJdbcTemplate(NamedParameterJdbcTemplate namedParameterJdbcTemplate)
-    {
-        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
-    }
 
     /**
      * 
@@ -85,7 +44,7 @@ public class UserDao
     {
         LOG.info("UserDao.insertUser called");
 
-        final int numRows = this.jdbcTemplate.update(INSERT_USER, new PreparedStatementSetter()
+        final int numRows = this.getJdbcTemplate().update(INSERT_USER, new PreparedStatementSetter()
         {
             @Override
             public void setValues(PreparedStatement ps) throws SQLException
@@ -111,7 +70,7 @@ public class UserDao
     {
         LOG.info("UserDao.updateUserActivity called");
         
-        int numRows = this.jdbcTemplate.update(UPDATE_USER_ACTIVITY, new PreparedStatementSetter()
+        int numRows = this.getJdbcTemplate().update(UPDATE_USER_ACTIVITY, new PreparedStatementSetter()
         {
             @Override
             public void setValues(PreparedStatement ps) throws SQLException
@@ -134,7 +93,7 @@ public class UserDao
     {
         LOG.info("UserDao.getFriendsOfUser called");
         
-        final List<Integer> friendIds = this.jdbcTemplate.query(GET_USER_FRIENDS, new PreparedStatementSetter()
+        final List<Integer> friendIds = this.getJdbcTemplate().query(GET_USER_FRIENDS, new PreparedStatementSetter()
         {
             /*
              * (non-Javadoc)
@@ -173,9 +132,19 @@ public class UserDao
         final Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("ufids", userIds);
         
-        final List<User> users = this.namedParameterJdbcTemplate.query(GET_USER_DETAILS, paramMap, new UserRowMapper());
+        List<User> users = this.getNamedParameterJdbcTemplate().query(GET_USER_DETAILS, paramMap, new UserRowMapper());
         
-        LOG.info("Number of users fetched for the " + userIds.size() + " is " + users.size());
+        LOG.info("Number of users fetched for the " + userIds.size() + " is " + users.size());        
+        LOG.info("Filtering the users who are inactive");
+        
+        final Iterator<User> iterator = users.iterator();
+        while(iterator.hasNext())
+        {
+            if(!iterator.next().isActive())
+                iterator.remove();
+        }
+                
+        LOG.info("Number of users after filtering is :" + users.size());
         
         return users;
     }

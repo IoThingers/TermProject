@@ -9,14 +9,16 @@ package net.stupidiot.iothingers.model;
  */
 public class Room
 {
-    private String id;
+    private int id;
     private String name;
     private int level;
+    private boolean available;
+    private int libraryId;
 
     /**
      * @return the id
      */
-    public String getId()
+    public int getId()
     {
         return id;
     }
@@ -25,7 +27,7 @@ public class Room
      * @param id
      *            the id to set
      */
-    public void setId(String id)
+    public void setId(int id)
     {
         this.id = id;
     }
@@ -62,5 +64,39 @@ public class Room
     public void setLevel(int level)
     {
         this.level = level;
+    }
+
+    /**
+     * @return the available
+     */
+    public boolean isAvailable()
+    {
+        return available;
+    }
+
+    /**
+     * @param available
+     *            the available to set
+     */
+    public void setAvailable(boolean available)
+    {
+        this.available = available;
+    }
+
+    /**
+     * @return the libraryId
+     */
+    public int getLibraryId()
+    {
+        return libraryId;
+    }
+
+    /**
+     * @param libraryId
+     *            the libraryId to set
+     */
+    public void setLibraryId(int libraryId)
+    {
+        this.libraryId = libraryId;
     }
 }

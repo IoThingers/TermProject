@@ -6,6 +6,7 @@ package net.stupidiot.iothingers.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -30,8 +31,10 @@ public class GroupDao extends JdbcTemplateDao
 
     private static final String INSERT_GROUP = "INSERT INTO \"dbo\".\"GROUP\"(GROUP_NAME, ROOM_ID, CREATOR_ID, COURSE_ID) VALUES(?, ?, ?, ?)";
     private static final String DELETE_GROUP = "DELETE FROM \"dbo\".\"GROUP\" WHERE GROUP_ID = ?";
-    private static final String DELETE_USER_FROM_GROUP_USERS = "DELETE FROM GROUP_USERS WHERE GROUP_ID = ? AND UFID = ?";
     private static final String GET_ALL_GROUPS = "SELECT GROUP_ID, GROUP_NAME, ROOM_ID, CREATOR_ID, COURSE_ID FROM \"dbo\".\"GROUP\"";
+    private static final String GET_GROUPS_FOR_COURSE = "SELECT GROUP_ID, GROUP_NAME, ROOM_ID, CREATOR_ID, COURSE_ID FROM \"dbo\".\"GROUP\" WHERE COURSE_ID = ?";
+    private static final String INSERT_USER_IN_GROUP_USER = "INSERT INTO GROUP_USER VALUES(?, ?)";
+    private static final String DELETE_USER_FROM_GROUP_USER = "DELETE FROM GROUP_USER WHERE UFID = ? AND GROUP_ID = ?";
     
     /**
      * @param group
@@ -48,7 +51,7 @@ public class GroupDao extends JdbcTemplateDao
             @Override
             public PreparedStatement createPreparedStatement(Connection connection) throws SQLException
             {
-                final PreparedStatement ps = connection.prepareStatement(INSERT_GROUP);
+                final PreparedStatement ps = connection.prepareStatement(INSERT_GROUP, Statement.RETURN_GENERATED_KEYS);
                 ps.setString(1, group.getName());
                 ps.setInt(2, group.getRoomId());
                 ps.setInt(3, group.getCreatorId());
@@ -60,7 +63,32 @@ public class GroupDao extends JdbcTemplateDao
         
         LOG.info("No. of rows inserted: " + numRows);
         LOG.info("The group id generated is " + holder.getKey().intValue());
+        
+        this.addUserToGroup(group.getCreatorId(), holder.getKey().intValue());        
         return holder.getKey().intValue();
+    }
+
+    /**
+     * @param creatorId
+     * @param intValue
+     */
+    public int addUserToGroup(final int creatorId, final int groupId)
+    {
+        LOG.info("GroupDao.addUserToGroup method called for userId: " + creatorId + " and groupId: " + groupId);
+        
+        int numRows = this.getJdbcTemplate().update(INSERT_USER_IN_GROUP_USER, new PreparedStatementSetter()
+        {
+            @Override
+            public void setValues(PreparedStatement ps) throws SQLException
+            {
+                ps.setInt(1, groupId);
+                ps.setInt(2, creatorId);
+            }
+        });
+        
+        LOG.info("User has been successfully inserted in the group.");
+        
+        return numRows;
     }
 
     /**
@@ -94,5 +122,49 @@ public class GroupDao extends JdbcTemplateDao
         final List<Group> groups = this.getJdbcTemplate().query(GET_ALL_GROUPS, new GroupRowMapper());
         LOG.info("No. of groups successfully fetched: " + groups.size());
         return groups;
+    }
+
+    /**
+     * @param courseId
+     * @return
+     */
+    public List<Group> getGroupsForCourse(final int courseId)
+    {
+        LOG.info("GroupDao.getGroupsForCourse method called for courseId: " + courseId);
+        final List<Group> groups = this.getJdbcTemplate().query(GET_GROUPS_FOR_COURSE, new PreparedStatementSetter()
+        {
+            @Override
+            public void setValues(PreparedStatement ps) throws SQLException
+            {
+                ps.setInt(1, courseId);
+            }
+        }, new GroupRowMapper());
+        
+        LOG.info("No. of groups successfully fetched: " + groups.size());
+        return groups;
+    }
+
+    /**
+     * @param userId
+     * @param groupId
+     * @return
+     */
+    public int deleteUserFromGroup(final int userId, final int groupId)
+    {
+        LOG.info("GroupDao.deleteUserFromGroup method called for userId: " + userId + " and groupId: " + groupId);
+        
+        int numRows = this.getJdbcTemplate().update(DELETE_USER_FROM_GROUP_USER, new PreparedStatementSetter()
+        {
+            @Override
+            public void setValues(PreparedStatement ps) throws SQLException
+            {
+                ps.setInt(1, userId);
+                ps.setInt(2, groupId);
+            }
+        });
+        
+        LOG.info("User has been successfully deleted from the group.");
+        
+        return numRows;
     }
 }

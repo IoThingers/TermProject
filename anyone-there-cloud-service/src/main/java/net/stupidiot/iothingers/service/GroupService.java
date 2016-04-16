@@ -63,11 +63,43 @@ public class GroupService
     }
 
     /**
+     * @param userId
+     * @param groupId
+     * @return
+     */
+    public boolean addUserToGroup(int userId, int groupId)
+    {
+        LOG.info("GroupService.addUserToGroup method called.");
+        return this.dao.addUserToGroup(userId, groupId) == 1;
+    }
+
+    /**
      * @return
      */
     public List<Group> getAllGroups()
     {
         LOG.info("GroupService.getAllGroups method called.");
         return this.dao.getAllGroups();
+    }
+
+    /**
+     * @param courseId
+     * @return
+     */
+    public List<Group> getGroupsForCourse(int courseId)
+    {
+        LOG.info("GroupService.getGroupsForCourse method called.");
+        return this.dao.getGroupsForCourse(courseId);
+    }
+
+    /**
+     * @param userId
+     * @param groupId
+     * @return
+     */
+    public boolean deleteUserFromGroup(int userId, int groupId)
+    {
+        LOG.info("GroupService.deleteUserFromGroup method called.");
+        return this.dao.deleteUserFromGroup(userId, groupId) == 1;
     }
 }

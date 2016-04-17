@@ -42,7 +42,7 @@ public class UserDao extends JdbcTemplateDao
      */
     public int insertUser(final User user)
     {
-        LOG.info("UserDao.insertUser called");
+        LOG.info("UserDao.insertUser called for userId: " + user.getUfid());
 
         final int numRows = this.getJdbcTemplate().update(INSERT_USER, new PreparedStatementSetter()
         {
@@ -52,11 +52,11 @@ public class UserDao extends JdbcTemplateDao
                 ps.setInt(1, user.getUfid());
                 ps.setString(2, user.getName());
                 ps.setString(3, user.getMajor());
-                ps.setBoolean(4, user.isActive());
+                ps.setBoolean(4, true);
             }
         });
 
-        LOG.info("Number of rows inserted: " + numRows);
+        LOG.info("Number of rows inserted for insertUser: " + numRows);
 
         return numRows;
     }
@@ -68,7 +68,7 @@ public class UserDao extends JdbcTemplateDao
      */
     public int updateUserActivity(final int userId, final boolean isActive)
     {
-        LOG.info("UserDao.updateUserActivity called");
+        LOG.info("UserDao.updateUserActivity called for userId: " + userId);
         
         int numRows = this.getJdbcTemplate().update(UPDATE_USER_ACTIVITY, new PreparedStatementSetter()
         {
@@ -80,7 +80,7 @@ public class UserDao extends JdbcTemplateDao
             }
         });
 
-        LOG.info("Number of rows updated: " + numRows);
+        LOG.info("Number of rows updated for userId: " + userId + ": " + numRows);
         
         return numRows;
     }
@@ -91,7 +91,7 @@ public class UserDao extends JdbcTemplateDao
      */
     public List<User> getFriendsOfUser(final int userId)
     {
-        LOG.info("UserDao.getFriendsOfUser called");
+        LOG.info("UserDao.getFriendsOfUser called for userId: " + userId);
         
         final List<Integer> friendIds = this.getJdbcTemplate().query(GET_USER_FRIENDS, new PreparedStatementSetter()
         {
@@ -127,7 +127,7 @@ public class UserDao extends JdbcTemplateDao
      */
     public List<User> getUserDetails(List<Integer> userIds)
     {
-        LOG.info("UserDao.getUserDetails");
+        LOG.info("UserDao.getUserDetails called for userIds: " + userIds);
         
         final Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("ufids", userIds);

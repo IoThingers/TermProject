@@ -49,10 +49,10 @@ public class UserService
      * @return
      * @throws UserExistsException
      */
-    public int createUser(final User user)
+    public boolean createUser(final User user)
     {
         LOG.info("UserService.createUser called.");
-        return this.dao.insertUser(user);
+        return this.dao.insertUser(user) == 1;
     }
     
     /**

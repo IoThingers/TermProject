@@ -97,10 +97,10 @@ public class GroupService
      * @param groupId
      * @return
      */
-    public boolean deleteUserFromGroup(int userId, int groupId)
+    public boolean deleteUserFromGroup(int userId)
     {
         LOG.info("GroupService.deleteUserFromGroup method called.");
-        return this.dao.deleteUserFromGroup(userId, groupId) == 1;
+        return this.dao.deleteUserFromGroup(userId) == 1;
     }
 
     /**

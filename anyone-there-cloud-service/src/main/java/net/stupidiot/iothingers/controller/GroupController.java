@@ -173,16 +173,15 @@ public class GroupController
      * @return
      */
     @RequestMapping(path = "/delete-user-from-group", method = RequestMethod.DELETE)
-    public RestResponse<Boolean> deleteUserFromGroup(@RequestParam(value = "user-id") final int userId,
-            @RequestParam(value = "group-id") final int groupId)
+    public RestResponse<Boolean> deleteUserFromGroup(@RequestParam(value = "user-id") final int userId)
     {
-        LOG.info("GroupController.deleteUserFromGroup method called for userId: " + userId + " and groupId: " + groupId);
+        LOG.info("GroupController.deleteUserFromGroup method called for userId: " + userId);
 
         final RestResponse<Boolean> response = new RestResponse<>();
 
         try
         {
-            boolean deleted = this.service.deleteUserFromGroup(userId, groupId);
+            boolean deleted = this.service.deleteUserFromGroup(userId);
 
             response.setResponseCode(200);
             response.setResponseMessage("Success");
@@ -191,7 +190,7 @@ public class GroupController
 
             if(deleted)
             {
-                LOG.info("User with UFID: "+ userId +" deleted from the group with groupId: " + groupId);
+                LOG.info("User with UFID: "+ userId +" deleted from the group");
             }
         }
         catch (Exception e)

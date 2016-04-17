@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import net.stupidiot.iothingers.dao.RoomDao;
+import net.stupidiot.iothingers.model.Room;
 
 /**
  * @author Rahul
@@ -47,5 +48,15 @@ public class RoomService
     {
         LOG.info("RoomService.isRoomAvailale called");
         return this.dao.isRoomAvailable(roomId);
+    }
+
+    /**
+     * @param roomId
+     * @return
+     */
+    public Room getRoomDetails(int roomId)
+    {
+        LOG.info("RoomService.getRoomDetails called.");
+        return this.dao.getRoomDetails(roomId);
     }
 }

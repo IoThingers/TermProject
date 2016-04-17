@@ -12,6 +12,9 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Repository;
 
+import net.stupidiot.iothingers.dao.mapper.RoomRowMapper;
+import net.stupidiot.iothingers.model.Room;
+
 /**
  * @author Rahul
  *
@@ -22,6 +25,8 @@ public class RoomDao extends JdbcTemplateDao
     private static final Logger LOG = LoggerFactory.getLogger(RoomDao.class);
     
     private static final String GET_ROOM_AVAILABILITY = "SELECT AVAILABILITY FROM ROOM WHERE ROOM_ID = ?";
+    private static final String SET_ROOM_AVAILABILITY = "UPDATE ROOM SET AVAILABILITY = ? WHERE ROOM_ID = ?";
+    private static final String GET_ROOM_DETAILS = "SELECT ROOM_ID, ROOM_NAME, LIBRARY_ID, AVAILABILITY, LEVEL FROM ROOM WHERE ROOM_ID = ?";
     
     /**
      * @param roomId
@@ -48,5 +53,38 @@ public class RoomDao extends JdbcTemplateDao
         
         LOG.info("The availability of the room " + roomId + " is " + isAvailable);        
         return isAvailable;
+    }
+    
+    /**
+     * 
+     * @param roomId
+     * @param isAvailable
+     * @return
+     */
+    public int setRoomAvailability(int roomId, boolean isAvailable)
+    {
+        LOG.info("RoomDao.setRoomAvailability method called with roomId: " + roomId + " availability: " + isAvailable);
+        
+        int numRows = this.getJdbcTemplate().update(SET_ROOM_AVAILABILITY, isAvailable, roomId);
+        
+        LOG.info("Successfully updated the availability of roomId: " + roomId);
+        
+        return numRows;
+        
+    }
+
+    /**
+     * @param roomId
+     * @return
+     */
+    public Room getRoomDetails(final int roomId)
+    {
+        LOG.info("RoomDao.getRoomDetails method called for roomId: " + roomId);
+        
+        final Room room = this.getJdbcTemplate().queryForObject(GET_ROOM_DETAILS, new RoomRowMapper(), roomId);
+        
+        LOG.info("Successfully fetched details for the room with id: " + roomId);
+        
+        return room;
     }
 }

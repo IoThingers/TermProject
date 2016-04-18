@@ -312,4 +312,40 @@ public class GroupController
         
         return response;
     }
+    
+    /**
+     * 
+     * @param userId
+     * @return
+     */
+    @RequestMapping(path = "/get-group-details-by-user", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public RestResponse<Group> getGroupDetailsByUserId(@RequestParam(name = "user-id") final int userId)
+    {
+        LOG.info("GroupController.getGroupDetails method called for groupId: {}", userId);
+        
+        final RestResponse<Group> response = new RestResponse<>();
+
+        try
+        {
+            final Group group = this.service.getGroupDetailsByUserId(userId);
+
+            response.setResponseCode(200);
+            response.setResponseMessage("Success");
+            response.setType(ResponseType.GROUP);
+            response.setResponse(group);
+
+            LOG.info("Group details successfully fetched : {}", group.getId());
+        }
+        catch (Exception e)
+        {
+            LOG.error("An error occurred while fetching the groups details for userId: " + userId, e);
+
+            response.setResponseCode(400);
+            response.setResponseMessage("Failure: " + e.getMessage());
+            response.setType(ResponseType.STRING);
+            response.setResponse(null);
+        }
+        
+        return response;
+    }
 }

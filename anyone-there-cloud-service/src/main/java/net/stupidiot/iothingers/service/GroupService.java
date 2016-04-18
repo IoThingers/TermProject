@@ -112,4 +112,14 @@ public class GroupService
         LOG.info("GroupService.getGroupDetails method called.");
         return this.dao.getGroupDetails(groupId);
     }
+
+    /**
+     * @param userId
+     * @return
+     */
+    public Group getGroupDetailsByUserId(int userId)
+    {
+        LOG.info("GroupService.getGroupDetailsByUserId method called for userId {}", userId);
+        return this.dao.getGroupDetailsByUserId(userId);
+    }
 }

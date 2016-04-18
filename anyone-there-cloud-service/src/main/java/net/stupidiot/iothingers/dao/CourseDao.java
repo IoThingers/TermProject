@@ -3,13 +3,10 @@
  */
 package net.stupidiot.iothingers.dao;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.stereotype.Repository;
 
 import net.stupidiot.iothingers.dao.mapper.CourseRowMapper;
@@ -48,18 +45,10 @@ public class CourseDao extends JdbcTemplateDao
      */
     public List<Course> getCourseByUser(final int userId)
     {
-        LOG.info("CourseDao.getCourseByUser called");
-        
+        LOG.info("CourseDao.getCourseByUser called");        
         LOG.info("Querying the courses for UFID: " + userId);
 
-        final List<Course> courses = this.getJdbcTemplate().query(GET_COURSE_BY_USER, new PreparedStatementSetter()
-        {            
-            @Override
-            public void setValues(PreparedStatement ps) throws SQLException
-            {
-                ps.setInt(1, userId);
-            }
-        },new CourseRowMapper());
+        final List<Course> courses = this.getJdbcTemplate().query(GET_COURSE_BY_USER, new CourseRowMapper(), userId);
 
         LOG.info("Number of courses fetched: " + courses.size());
 

@@ -112,7 +112,7 @@ public class UserDao extends JdbcTemplateDao
             public Integer mapRow(ResultSet rs, int rowNum) throws SQLException
             {
                 return rs.getInt(1) == userId ? rs.getInt(2) : rs.getInt(1);
-            }            
+            }
         });
         
         LOG.info("Number of friends for the user : " + userId + " is " + friendIds.size());

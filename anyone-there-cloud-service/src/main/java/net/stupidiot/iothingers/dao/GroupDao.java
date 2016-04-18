@@ -41,6 +41,8 @@ public class GroupDao extends JdbcTemplateDao
     private static final String GET_USERS_FOR_GROUP = "SELECT U.UFID, U.USER_NAME, U.USER_MAJOR, U.USER_ACTIVE FROM USERS U, GROUP_USER GU WHERE U.UFID = GU.UFID AND GU.GROUP_ID = ?";
     private static final String GET_GROUP_BY_GROUP_ID = "SELECT G.GROUP_ID, G.GROUP_NAME, G.ROOM_ID, G.CREATOR_ID, G.COURSE_ID, R.ROOM_NAME, C.COURSE_NAME, U.USER_NAME FROM \"dbo\".\"GROUP\" G, ROOM R, COURSE C, USERS U WHERE R.ROOM_ID = G.ROOM_ID AND C.COURSE_ID = G.COURSE_ID AND U.UFID = G.CREATOR_ID AND G.GROUP_ID = ?";
     private static final String GET_ROOM_OF_GROUP = "SELECT ROOM_ID FROM \"dbo\".\"GROUP\" WHERE GROUP_ID = ?";
+    private static final String GET_GROUP_BY_USER_ID = "SELECT G.GROUP_ID, G.GROUP_NAME, G.ROOM_ID, G.CREATOR_ID, G.COURSE_ID, R.ROOM_NAME, C.COURSE_NAME, U.USER_NAME FROM \"dbo\".\"GROUP\" G, ROOM R, COURSE C, USERS U, GROUP_USER GU WHERE R.ROOM_ID = G.ROOM_ID AND C.COURSE_ID = G.COURSE_ID AND U.UFID = G.CREATOR_ID AND GU.GROUP_ID = G.GROUP_ID AND GU.UFID = ?";
+
 
     @Autowired
     private RoomDao roomDao;
@@ -200,10 +202,9 @@ public class GroupDao extends JdbcTemplateDao
      */
     public Group getGroupDetails(final int groupId)
     {
-        LOG.info("GroupDao.getGroupDetails method called for userId: " + groupId);
+        LOG.info("GroupDao.getGroupDetails method called for groupId: " + groupId);
 
-        final Group group = this.getJdbcTemplate().queryForObject(GET_GROUP_BY_GROUP_ID, new GroupRowMapper(true),
-                groupId);
+        final Group group = this.getJdbcTemplate().queryForObject(GET_GROUP_BY_GROUP_ID, new GroupRowMapper(true), groupId);
 
         LOG.info("Successfully fetched group details for the group with groupId: " + groupId);
 
@@ -225,5 +226,22 @@ public class GroupDao extends JdbcTemplateDao
         LOG.info("No. of users fetched for the group: " + members.size());
 
         group.setMembers(members);
+    }
+
+    /**
+     * @param userId
+     * @return
+     */
+    public Group getGroupDetailsByUserId(int userId)
+    {
+        LOG.info("GroupDao.getGroupDetails method called for userId: {}", userId);
+
+        final Group group = this.getJdbcTemplate().queryForObject(GET_GROUP_BY_USER_ID, new GroupRowMapper(true), userId);
+
+        LOG.info("Successfully fetched group details for the group with groupId: " + userId);
+
+        populateUsersInGroup(group);
+
+        return group;        
     }
 }

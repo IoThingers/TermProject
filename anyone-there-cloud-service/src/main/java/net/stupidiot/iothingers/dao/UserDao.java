@@ -93,19 +93,7 @@ public class UserDao extends JdbcTemplateDao
     {
         LOG.info("UserDao.getFriendsOfUser called for userId: " + userId);
         
-        final List<Integer> friendIds = this.getJdbcTemplate().query(GET_USER_FRIENDS, new PreparedStatementSetter()
-        {
-            /*
-             * (non-Javadoc)
-             * @see org.springframework.jdbc.core.PreparedStatementSetter#setValues(java.sql.PreparedStatement)
-             */
-            @Override
-            public void setValues(PreparedStatement ps) throws SQLException
-            {
-                ps.setInt(1, userId);
-                ps.setInt(2, userId);
-            }
-        },
+        final List<Integer> friendIds = this.getJdbcTemplate().query(GET_USER_FRIENDS, 
         new RowMapper<Integer>()
         {
             @Override
@@ -113,7 +101,7 @@ public class UserDao extends JdbcTemplateDao
             {
                 return rs.getInt(1) == userId ? rs.getInt(2) : rs.getInt(1);
             }
-        });
+        }, userId, userId);
         
         LOG.info("Number of friends for the user : " + userId + " is " + friendIds.size());
         

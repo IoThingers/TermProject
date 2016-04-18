@@ -55,6 +55,15 @@
 			<artifactId>google-api-client</artifactId>
 			<version>1.21.0</version>
 		</dependency>
+		<dependency>
+			<groupId>com.google.api-services</groupId>
+			<artifactId>google-api-services-clouddevices</artifactId>
+			<version>v1-rev20140812-1.19.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

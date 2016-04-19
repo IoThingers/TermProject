@@ -11,26 +11,27 @@ import java.util.List;
  */
 public class User
 {
-    private String id;
+    private int ufid;
     private String name;
     private String major;
+    private boolean active;
     private List<Course> courses;
 
     /**
-     * @return the id
+     * @return the ufid
      */
-    public String getId()
+    public int getUfid()
     {
-        return id;
+        return ufid;
     }
 
     /**
-     * @param id
-     *            the id to set
+     * @param ufid
+     *            the ufid to set
      */
-    public void setId(String id)
+    public void setUfid(int ufid)
     {
-        this.id = id;
+        this.ufid = ufid;
     }
 
     /**
@@ -65,6 +66,23 @@ public class User
     public void setMajor(String major)
     {
         this.major = major;
+    }
+
+    /**
+     * @return the active
+     */
+    public boolean isActive()
+    {
+        return active;
+    }
+
+    /**
+     * @param active
+     *            the active to set
+     */
+    public void setActive(boolean active)
+    {
+        this.active = active;
     }
 
     /**

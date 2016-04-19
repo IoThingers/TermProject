@@ -9,5 +9,5 @@ package net.stupidiot.iothingers.response;
  */
 public enum ResponseType
 {
-    USER, COURSE, GROUP, ROOM, STRING, BOOLEAN, NUMBER, LIST;
+    USER, COURSE, GROUP, ROOM, SECTION, STRING, BOOLEAN, NUMBER, LIST;
 }

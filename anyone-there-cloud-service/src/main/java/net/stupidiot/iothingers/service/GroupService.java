@@ -97,10 +97,29 @@ public class GroupService
      * @param groupId
      * @return
      */
-    public boolean deleteUserFromGroup(int userId)
+    public boolean deleteUserFromGroup(int userId, int groupId)
     {
         LOG.info("GroupService.deleteUserFromGroup method called.");
-        return this.dao.deleteUserFromGroup(userId) == 1;
+        boolean isDeleted = this.dao.deleteUserFromGroup(userId) == 1;
+        
+        if(isDeleted && isGroupEmpty(groupId))
+        {
+            LOG.info("The group with groupId {} is now empty. Deleting the group.");
+            this.deleteGroup(groupId);
+        }
+        
+        return isDeleted;
+    }
+
+    /**
+     * @param groupId
+     * @return
+     */
+    private boolean isGroupEmpty(int groupId)
+    {
+        LOG.info("GroupService.isGroupEmpty method called.");
+        LOG.info("Checking the number of users in the group {}");
+        return this.dao.isGroupEmpty(groupId);
     }
 
     /**

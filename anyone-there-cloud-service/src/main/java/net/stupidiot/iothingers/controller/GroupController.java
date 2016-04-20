@@ -173,15 +173,15 @@ public class GroupController
      * @return
      */
     @RequestMapping(path = "/delete-user-from-group", method = RequestMethod.DELETE)
-    public RestResponse<Boolean> deleteUserFromGroup(@RequestParam(value = "user-id") final int userId)
+    public RestResponse<Boolean> deleteUserFromGroup(@RequestParam(value = "user-id") final int userId, @RequestParam(value="group-id") final int groupId)
     {
-        LOG.info("GroupController.deleteUserFromGroup method called for userId: " + userId);
+        LOG.info("GroupController.deleteUserFromGroup method called for userId: {} and groupId: {}");
 
         final RestResponse<Boolean> response = new RestResponse<>();
 
         try
         {
-            boolean deleted = this.service.deleteUserFromGroup(userId);
+            boolean deleted = this.service.deleteUserFromGroup(userId, groupId);
 
             response.setResponseCode(200);
             response.setResponseMessage("Success");

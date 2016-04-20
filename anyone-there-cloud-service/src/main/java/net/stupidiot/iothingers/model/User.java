@@ -16,6 +16,7 @@ public class User
     private String major;
     private boolean active;
     private List<Course> courses;
+    private String email;
 
     /**
      * @return the ufid
@@ -101,4 +102,22 @@ public class User
     {
         this.courses = courses;
     }
+
+    /**
+     * @return the email
+     */
+    public String getEmail()
+    {
+        return email;
+    }
+
+    /**
+     * @param email
+     *            the email to set
+     */
+    public void setEmail(String email)
+    {
+        this.email = email;
+    }
+
 }

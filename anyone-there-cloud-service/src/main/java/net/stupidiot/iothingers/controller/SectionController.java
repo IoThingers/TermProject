@@ -54,7 +54,7 @@ public class SectionController
      * @return
      */
     @RequestMapping(path = "/update-section-count", method = RequestMethod.POST)
-    public RestResponse<Boolean> updateCount(@RequestParam(name = "section-id") final int sectionId,
+    public RestResponse<Boolean> updateCount(@RequestParam(value = "section-id") final int sectionId,
             @RequestParam(name = "count") final int count)
     {
         LOG.info("SectionController.updateCount method called for sectionId {} and count {}", sectionId, count);
@@ -87,7 +87,7 @@ public class SectionController
      * @return
      */
     @RequestMapping(path = "/get-section-details", method = RequestMethod.GET)
-    public RestResponse<Section> getSectionDetails(@RequestParam(name = "section-id") final int sectionId)
+    public RestResponse<Section> getSectionDetails(@RequestParam(value = "section-id") final int sectionId)
     {
         LOG.info("SectionController.getSectionDetails method called for sectionId {} and count {}", sectionId);
 

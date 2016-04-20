@@ -30,11 +30,12 @@ public class UserDao extends JdbcTemplateDao
 {
     private static final Logger LOG = LoggerFactory.getLogger(UserDao.class);
 
-    private static final String INSERT_USER = "INSERT INTO USERS(UFID, USER_NAME, USER_MAJOR, USER_ACTIVE) VALUES(?, ?, ?, ?)";
+    private static final String INSERT_USER = "INSERT INTO USERS(UFID, USER_NAME, USER_MAJOR, USER_ACTIVE, USER_EMAIL) VALUES(?, ?, ?, ?, ?)";
     private static final String UPDATE_USER_ACTIVITY = "UPDATE USERS SET USER_ACTIVE = ? WHERE UFID = ?";
-    private static final String GET_USER_DETAILS = "SELECT UFID, USER_NAME, USER_MAJOR, USER_ACTIVE FROM USERS WHERE UFID IN (:ufids)";
+    private static final String GET_USER_DETAILS = "SELECT UFID, USER_NAME, USER_MAJOR, USER_ACTIVE, USER_EMAIL FROM USERS WHERE UFID IN (:ufids)";
     private static final String GET_USER_FRIENDS = "SELECT USERS_1, USERS_2 FROM FRIENDSHIP WHERE USERS_2 = ? OR USERS_1 = ?";
-
+    private static final String INSERT_DUMMY_FRIENDS = "INSERT INTO FRIENDSHIP SELECT TOP 5 UFID, ? FROM USERS";
+    
     /**
      * 
      * @param user
@@ -53,11 +54,16 @@ public class UserDao extends JdbcTemplateDao
                 ps.setString(2, user.getName());
                 ps.setString(3, user.getMajor());
                 ps.setBoolean(4, true);
+                ps.setString(5, user.getEmail());
             }
         });
 
         LOG.info("Number of rows inserted for insertUser: " + numRows);
 
+        LOG.info("Inserting dummy friends for userId {}", user.getUfid());
+        
+        this.insertDummyFriends(user.getUfid());
+        
         return numRows;
     }
 
@@ -122,7 +128,7 @@ public class UserDao extends JdbcTemplateDao
         
         List<User> users = this.getNamedParameterJdbcTemplate().query(GET_USER_DETAILS, paramMap, new UserRowMapper());
         
-        LOG.info("Number of users fetched for the " + userIds.size() + " is " + users.size());        
+        LOG.info("Number of users fetched for the " + userIds.size() + " is " + users.size());
         LOG.info("Filtering the users who are inactive");
         
         final Iterator<User> iterator = users.iterator();
@@ -132,8 +138,19 @@ public class UserDao extends JdbcTemplateDao
                 iterator.remove();
         }
                 
-        LOG.info("Number of users after filtering is :" + users.size());
+        LOG.info("Number of users after filtering is : {}", users.size());
         
         return users;
+    }
+    
+    /**
+     * 
+     * @param userId
+     * @return
+     */
+    private int insertDummyFriends(int userId)
+    {
+        LOG.info("UserDao.insertDummyFriends method called for userId {}", userId);
+        return this.getJdbcTemplate().update(INSERT_DUMMY_FRIENDS, userId);
     }
 }

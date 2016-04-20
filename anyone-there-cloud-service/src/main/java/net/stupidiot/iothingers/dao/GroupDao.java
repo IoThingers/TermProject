@@ -5,6 +5,7 @@ package net.stupidiot.iothingers.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
@@ -12,8 +13,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -42,7 +45,7 @@ public class GroupDao extends JdbcTemplateDao
     private static final String GET_GROUP_BY_GROUP_ID = "SELECT G.GROUP_ID, G.GROUP_NAME, G.ROOM_ID, G.CREATOR_ID, G.COURSE_ID, R.ROOM_NAME, C.COURSE_NAME, U.USER_NAME FROM \"dbo\".\"GROUP\" G, ROOM R, COURSE C, USERS U WHERE R.ROOM_ID = G.ROOM_ID AND C.COURSE_ID = G.COURSE_ID AND U.UFID = G.CREATOR_ID AND G.GROUP_ID = ?";
     private static final String GET_ROOM_OF_GROUP = "SELECT ROOM_ID FROM \"dbo\".\"GROUP\" WHERE GROUP_ID = ?";
     private static final String GET_GROUP_BY_USER_ID = "SELECT G.GROUP_ID, G.GROUP_NAME, G.ROOM_ID, G.CREATOR_ID, G.COURSE_ID, R.ROOM_NAME, C.COURSE_NAME, U.USER_NAME FROM \"dbo\".\"GROUP\" G, ROOM R, COURSE C, USERS U, GROUP_USER GU WHERE R.ROOM_ID = G.ROOM_ID AND C.COURSE_ID = G.COURSE_ID AND U.UFID = G.CREATOR_ID AND GU.GROUP_ID = G.GROUP_ID AND GU.UFID = ?";
-
+    private static final String CHECK_IF_GROUP_IS_EMPTY = "SELECT 1 FROM GROUP_USER WHERE GROUP_ID = ?";
 
     @Autowired
     private RoomDao roomDao;
@@ -243,5 +246,22 @@ public class GroupDao extends JdbcTemplateDao
         populateUsersInGroup(group);
 
         return group;        
+    }
+
+    /**
+     * @param groupId
+     * @return
+     */
+    public boolean isGroupEmpty(int groupId)
+    {
+        LOG.info("GroupDao.isGroupEmpty method called for groupId {}", groupId);
+        return this.getJdbcTemplate().query(CHECK_IF_GROUP_IS_EMPTY, new ResultSetExtractor<Boolean>()
+        {
+            @Override
+            public Boolean extractData(ResultSet rs) throws SQLException, DataAccessException
+            {
+                return rs.next();
+            }
+        }, groupId);
     }
 }
